@@ -151,13 +151,13 @@ docker run --privileged \
 
 3. **Start specific service**
    ```bash
-   # Start US Oregon proxy on port 80
+   # Start US Oregon proxy on port from service definition 
    docker-compose up us-oregon
    
-   # Start US Texas proxy on port 81  
+   # Start US Texas proxy on port from service definition   
    docker-compose up us-texas
    
-   # Start US Minnesota proxy on port 82
+   # Start US Minnesota proxy on port from service definition 
    docker-compose up us-minnesota
    ```
 
