@@ -18,8 +18,7 @@ func StartProxyServer(wg *sync.WaitGroup) {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "No target URL"})
 			return
 		}
-		//fullURL := "https://" + targetURL
-		fullURL := "https://eon1xjieuxpe6sn.m.pipedream.net"
+		fullURL := "https://" + targetURL
 		req, err := http.NewRequest(c.Request.Method, fullURL, c.Request.Body)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
