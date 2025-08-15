@@ -1,0 +1,51 @@
+# or with docker
+
+# build
+# docker build --platform linux/amd64 -t protun_no_envars .
+
+# run
+# docker run --privileged \
+#  -e VPN_CONFIG="vpn_config_filename" \
+#  -e VPN_USER="username" \
+#  -e VPN_PASS="password" \
+#  -v $(pwd)/ovpn:/app/ovpn \
+#  -p 80:8080 \
+#  protun_no_envars
+
+services:
+  common:
+    privileged: true
+    build:
+      context: .
+      platforms:
+        - linux/amd64
+    platform: linux/amd64
+    environment:
+      - VPN_USER=<username>
+      - VPN_PASS=<password>
+    volumes:
+      - /Users/mbruzina/.vpn/configs:/app/ovpn/configs
+
+  us-idaho-1:
+    extends:
+      service: common
+    environment:
+      - VPN_CONFIG=us_idaho_1
+    ports:
+      - "80:8080"
+
+  us-idaho-2:
+    extends:
+      service: common
+    environment:
+      - VPN_CONFIG=us_idaho_2
+    ports:
+      - "81:8080"
+
+  us-minnesota:
+    extends:
+      service: common
+    environment:
+      - VPN_CONFIG=us_minnesota
+    ports:
+      - "82:8080"
