@@ -24,6 +24,7 @@
 # Docker artifacts
 *.log
 docker-compose.override.yml
+docker-compose.private.yml
 
 # OS-specific files
 .DS_Store

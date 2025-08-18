@@ -1,8 +1,8 @@
 package main
 
 import (
-	"rando_proxy/proxy_server"
-	"rando_proxy/vpn"
+	"protun/server"
+	"protun/vpn"
 	"sync"
 )
 
@@ -16,5 +16,5 @@ func main() {
 	}()
 	<-started
 
-	proxy_server.StartProxyServer(&wg)
+	server.StartProxyServer(&wg)
 }
