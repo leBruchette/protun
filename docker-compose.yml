@@ -1,40 +1,37 @@
-services:
-  common:
-    privileged: true
-    build:
-      context: .
-      platforms:
-        - linux/amd64
-    platform: linux/amd64
-    environment:
-      - VPN_USER=<username>
-      - VPN_PASS=<password>
-    volumes:
-      - /local/path/to/your/vpn/configs:/app/ovpn/configs
+networks:
+  protun-network:
+    driver: bridge
 
-# update with your preferred VPN details
+# common properties shared across all vpn containers
+x-common:
+  &common
+  privileged: true
+  build:
+    context: .
+    platforms:
+      - linux/amd64
+  platform: linux/amd64
+  networks:
+    - protun-network
+  volumes:
+    - /path/to/your/configs:/app/ovpn/configs
+
+services:
+  # update with your preferred VPN details
   some-vpn-location:
-   extends:
-     service: common
-   environment:
-     - VPN_CONFIG=<some-vpn-location>
-   ports:
+    <<: *common
+    env_file:
+      - .env # contains VPN_USER and VPN_PASS
+    environment:
+      - VPN_CONFIG=some_vpn_location
+    ports:
       - "80:8080"
 
-
-# Example configurations for multiple concurrent VPN containers
-#  us-oregon:
-#    extends:
-#      service: common
-#    environment:
-#      - VPN_CONFIG=us_oregon
-#    ports:
-#      - "80:8080"
-#
-#  us-texas:
-#    extends:
-#      service: common
-#    environment:
-#      - VPN_CONFIG=us_texas
-#    ports:
-#      - "81:8080"
+  another-vpn-location:
+    <<: *common
+    env_file:
+      - .env # contains VPN_USER and VPN_PASS
+    environment:
+      - VPN_CONFIG=another_vpn_location
+    ports:
+      - "81:8080"

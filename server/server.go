@@ -1,12 +1,14 @@
-package proxy_server
+package server
 
 import (
+	"bytes"
 	"crypto/tls"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"io"
 	"net/http"
 	"os"
+	"strings"
 	"sync"
 )
 
@@ -18,13 +20,14 @@ func StartProxyServer(wg *sync.WaitGroup) {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "No target URL"})
 			return
 		}
-		fullURL := "https://" + targetURL
+
+		fullURL := "https://" + strings.TrimLeft(targetURL, "/")
 		req, err := http.NewRequest(c.Request.Method, fullURL, c.Request.Body)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
-		fmt.Printf("This here requeset:  %v", req)
+		fmt.Printf("This here requeset:  %v\n", req)
 
 		for k, v := range c.Request.Header {
 			req.Header[k] = v
@@ -44,8 +47,13 @@ func StartProxyServer(wg *sync.WaitGroup) {
 		for k, v := range resp.Header {
 			c.Writer.Header()[k] = v
 		}
+
 		c.Status(resp.StatusCode)
-		io.Copy(c.Writer, resp.Body)
+		htmlBody, err := io.ReadAll(resp.Body)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error reading body": err.Error()})
+		}
+		io.Copy(c.Writer, bytes.NewReader(htmlBody))
 	})
 	wg.Add(1)
 
